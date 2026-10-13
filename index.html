@@ -509,26 +509,6 @@ const questions = [
         }
       });
     }
-
-    // 6. PDF EXPORT
-    function downloadPDF() {
-      const element = document.getElementById('audit-report');
-      const opt = {
-        margin:       0.3,
-        filename:     'CyberSecurity_Behavioral_Audit_Report.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-
-    function resetApp() {
-      currentIndex = 0;
-      userAnswers = {};
-      document.getElementById('view-results').classList.add('hidden');
-      document.getElementById('view-landing').classList.remove('hidden');
-    }
   </script>
 </body>
 </html>
