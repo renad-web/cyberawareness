@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة تقييم الجاهزية والامتثال السيبراني</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- html2pdf.js via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+    body { font-family: 'Tajawal', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-wrap justify-between items-center gap-2">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl">🛡️</span>
+      <span class="font-bold text-lg bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+       مقياس السلوك والامتثال السيبراني
+      </span>
+    </div>
+    
+  </header>
+
+  <!-- Container -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- 1. LANDING VIEW -->
+    <section id="view-landing" class="text-center py-8">
+      
+      
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
+        أداة التدقيق الذاتي وتقييم الجاهزية والامتثال السيبراني
+      </h1>
+      
+      <p class="text-slate-400 text-sm md:text-base mb-8 max-w-2xl mx-auto leading-relaxed">
+      منصة تفاعلية تقيس مدى وعيك وسلوكك الأمني وموقفك  ضد التهديدات السيبرانية
+      </p>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-10 text-right">
+        <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl">
+          <div class="text-cyan-400 text-xl font-bold mb-1">📋 15 موقفاً من واقع العمل</div>
+          <p class="text-xs text-slate-400">تقييم سريع لكيفية تصرفك مع الرسائل والمواقف المستعجلة بالمكتب.</p>
+        </div>
+        <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl">
+          <div class="text-emerald-400 text-xl font-bold mb-1">📊رسم بياني للأداء</div>
+          <p class="text-xs text-slate-400">يعرض لك نقاط قوتك ومجالات التحسين بأسلوب بصري واضح ومباشر.</p>
+        </div>
+        <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl">
+          <div class="text-purple-400 text-xl font-bold mb-1">💡نصائح وتوجيهات مخصصة</div>
+          <p class="text-xs text-slate-400">تحدد لك أهم الخطوات العملية لتفادي الأخطاء الشائعة وحماية حسابك.</p>
+        </div>
+      </div>
+
+      <button onclick="startQuiz()" class="px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-emerald-500 font-bold rounded-xl text-slate-950 hover:opacity-90 transition shadow-lg shadow-cyan-500/20 text-base">
+        بدء التقييم الآن 🚀
+      </button>
+    </section>
+
+    <!-- 2. QUIZ WIZARD VIEW -->
+    <section id="view-quiz" class="hidden max-w-2xl mx-auto">
+      <!-- Progress Bar -->
+      <div class="mb-6">
+        <div class="flex justify-between text-xs text-slate-400 mb-2">
+          <span id="quiz-progress-text">السؤال 1 من 15</span>
+          <span id="quiz-progress-percent">0%</span>
+        </div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="quiz-progress-bar" class="h-full bg-cyan-400 transition-all duration-300 w-0"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 shadow-xl">
+        <span id="q-reference" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-cyan-400 border border-slate-700 inline-block mb-3">
+          📌 مرجعية البعد
+        </span>
+        <h2 id="q-text" class="text-lg md:text-xl font-bold text-slate-100 mb-6 leading-relaxed">
+          نص السؤال هنا...
+        </h2>
+
+        <div id="q-options" class="space-y-3">
+          <!-- Options injected via JS -->
+        </div>
+      </div>
+
+      <!-- Navigation Controls -->
+      <div class="flex justify-between items-center">
+        <button id="btn-prev" onclick="prevQuestion()" class="px-5 py-2 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800 text-sm disabled:opacity-30">
+          ⬅️ السؤال السابق
+        </button>
+        <button id="btn-next" onclick="nextQuestion()" disabled class="px-6 py-2 rounded-lg bg-cyan-500 font-bold text-slate-950 disabled:opacity-40 hover:bg-cyan-400 text-sm">
+          التالي ➡️
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. RESULTS DASHBOARD VIEW -->
+    <section id="view-results" class="hidden">
+      <div id="audit-report" class="p-6 bg-slate-950 rounded-2xl border border-slate-800">
+        
+        <!-- Header Summary -->
+        <div class="text-center mb-8 pb-8 border-b border-slate-800">
+          <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1">تقرير التدقيق والامتثال السلوكي الشخصي</span>
+          <h2 class="text-2xl md:text-3xl font-extrabold mb-4">نتيجة مؤشر المناعة والامتثال السيبراني</h2>
+          
+          <div class="inline-flex items-center gap-4 p-4 rounded-xl bg-slate-900 border border-slate-800">
+            <div id="res-score" class="text-4xl font-extrabold text-cyan-400">0%</div>
+            <div class="text-right">
+              <div id="res-status" class="font-bold text-base text-emerald-400">مستوى الأمان</div>
+              <div class="text-xs text-slate-400">  </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar Chart Container -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 mb-8">
+          <h3 class="font-bold mb-4 text-center text-slate-200 text-sm">مخطط أداء أبعاد الوعي والامتثال</h3>
+          <div class="relative w-full h-80">
+            <canvas id="radarCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Plan -->
+        <div class="mb-8">
+          <h3 class="font-bold text-base mb-4 flex items-center gap-2 text-amber-400">
+            ⚠️ خطة المعالجة السلوكية والأولويات
+          </h3>
+          <div id="remediation-list" class="space-y-3">
+            <!-- Action items injected via JS -->
+          </div>
+        </div>
+
+        
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-4 justify-center mt-8">
+        <button onclick="downloadPDF()" class="px-6 py-3 bg-cyan-500 text-slate-950 font-bold rounded-xl hover:bg-cyan-400 text-sm flex items-center gap-2">
+          📄 تحميل تقرير التقييم المعتمد (PDF)
+        </button>
+        <button onclick="resetApp()" class="px-6 py-3 border border-slate-800 bg-slate-900 text-slate-300 font-semibold rounded-xl hover:bg-slate-800 text-sm">
+          إعادة الفحص
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // 1. QUESTION BANK (15 Questions Aligned with HAIS-Q & MORPHEUS)
+    // بنك أسئلة مخصص لموظفي العمادات والإدارات والكليات بالجامعة
+const questions = [
+  {
+    id: 1, 
+    category: "السياسات والامتثال", 
+    reference: "سياسة الاستخدام المقبول بالجامعة",
+    question: "بصفتك موظفاً في الكلية/العمادة، طُلب منك إرسال ملف يحتوي على بيانات طلاب أو كشوفات إدارية لجهة خارجية، وتبين أن السياسة تمنع مشاركتها بالبريد المباشر:",
+    options: [
+      { text: "أتوقف عن المشاركة فوراً وأطلب فتح قناة نقل آمنة ومعتمدة من عمادة تقنية المعلومات حمايةً للبيانات.", weight: 100 },
+      { text: "أستأذن مسؤولي المباشر شفهياً وأرسل الملف عبر بريد شخصي أو سحابة خارجية لسرعة إنجاز المعاملة.", weight: 50 },
+      { text: "أغير امتداد الملف أو أضغطه ليتجاوز نظام الحظر في البريد الجامعي وإرساله.", weight: 20 },
+      { text: "أتجاوز السياسة وأرفع الملف على أي موقع عام لأن الأولوية لإنجاز المعاملة الإدارية.", weight: 0 }
+    ]
+  },
+  {
+    id: 2, 
+    category: "إدارة كلمات المرور والهوية", 
+    reference: "حساب الجامعة الموحد (SSO)",
+    question: "كيف تدير كلمة المرور الخاصة بحسابك الجامعي الموحد (SSO) الذي يمنحك الوصول للأنظمة الإدارية والأكاديمية؟",
+    options: [
+      { text: "أستخدم كلمة مرور معقدة وفريدة وأستعين ببرنامج إدارة كلمات المرور المعتمد دون مشاركتها مع أحد.", weight: 100 },
+      { text: "أنشئ كلمة مرور معقدة وأحفظها في ذاكرتي دون تدوينها في أوراق مكتبية.", weight: 70 },
+      { text: "أستخدم كلمة مرور واحدة قوية وأكررها في حساباتي الشخصية والجامعية لسهولة الحفظ.", weight: 30 },
+      { text: "أشارك كلمة المرور مع زميلي في القسم ليتسنى له متابعة المعاملات أثناء غيابي.", weight: 0 }
+    ]
+  },
+  {
+    id: 3, 
+    category: "الوعي بالمخاطر والاستجابة", 
+    reference: "إشعارات التوثيق (MFA Fatigue)",
+    question: "أثناء تأدية مهامك الإدارية بالمكتب، وصلتك إشعارات متتالية لموافقة دخول (MFA Push) على هاتفك لم تطلبها أنت:",
+    options: [
+      { text: "أرفض الطلب فوراً، وأغير كلمة مرور حسابي الجامعي، وأبلغ الدعم الفني عن محاولة اختراق.", weight: 100 },
+      { text: "أرفض الإشعار فقط دون تغيير كلمة المرور أو الإبلاغ.", weight: 60 },
+      { text: "أتجاهل الإشعار حتى يتوقف التنبيه تلقائياً.", weight: 30 },
+      { text: "أضغط على 'موافقة' لإلغاء التنبيه المزعج ومتابعة عملي الإداري.", weight: 0 }
+    ]
+  },
+  {
+    id: 4, 
+    category: "التدريب والتصيد الاحتيالي", 
+    reference: "التصيد في بيئة العمل",
+    question: "وصلتك رسالة بريد إلكتروني عاجلة تدعي أنها من الموارد البشرية بالجامعة تطلب تحديث بياناتك الماليّة فوراً لمنع توقف الراتب عبر رابط مرفق:",
+    options: [
+      { text: "أفحص عنوان البريد كاملاً والرابط الظاهر، وأبلغ عنها عبر زر الإبلاغ عن التصيد بالبريد الجامعي.", weight: 100 },
+      { text: "أتواصل مع الموارد البشرية بالجامعة عبر الهاتف للتأكد قبل فتح الرابط.", weight: 80 },
+      { text: "أضغط الرابط للتحقق من شكل الصفحة أولاً دون إدخال البيانات.", weight: 30 },
+      { text: "أُدخل بياناتي فوراً لتجنب توقف المسيرات المالية أو المزايا الوظيفية.", weight: 0 }
+    ]
+  },
+  {
+    id: 5, 
+    category: "الأخطاء التكوينية والبرمجيات", 
+    reference: "أجهزة العمل المكتبي",
+    question: "عند حاجتك لتثبيت تطبيق أو أداة جديدة لإنجاز التقارير أو المعاملات على جهازك المكتبي بالجامعة:",
+    options: [
+      { text: "أطلب تثبيتها رسمياً عبر تذكرة دعم فني لعمادة تقنية المعلومات لضمان أمان البرمجية.", weight: 100 },
+      { text: "أنزل البرامج من موقع الشركة الرسمي فقط وأفحصها بالمكافح قبل التشغيل.", weight: 75 },
+      { text: "أستخدم برامج مكركة (Cracks) أو روابط خارجية إذا كان البرنامج مدفوعاً.", weight: 20 },
+      { text: "أنزل أي برنامج من الإنترنت يؤدي الغرض دون التأكد من مصدره.", weight: 0 }
+    ]
+  },
+  {
+    id: 6, 
+    category: "حماية البيانات والخصوصية", 
+    reference: "نظام حماية البيانات الشخصية (PDPL) | سحابة الجامعة",
+    question: "عند مشاركة ملف إداري يحتوي على بيانات منسوبي الكلية أو درجات الطلاب عبر سحابة الجامعة (OneDrive):",
+    options: [
+      { text: "أحدد المشاركة لأشخاص محددين بأسمائهم (Specific People) مع تحديد صلاحية العرض فقط وتاريخ انتهاء.", weight: 100 },
+      { text: "أشارك الملف مع جميع الموظفين داخل نطاق الجامعة (People in Organization).", weight: 70 },
+      { text: "أجعل الرابط متاحاً لـ 'أي شخص لديه الرابط' لسهولة الفتح للجميع.", weight: 30 },
+      { text: "أرفع الملف على موقع رفع ملفات مجاني عام لتمريره بسرعة.", weight: 0 }
+    ]
+  },
+  {
+    id: 7, 
+    category: "التدريب والتصيد الاحتيالي", 
+    reference: "انتحال شخصيات القيادات",
+    question: "وصلتك رسالة واتساب/SMS من رقم مجهول يدعي أنه عميد الكلية أو رئيس الإدارة يطلب منك شراء بطاقات أو تحويل ملفات سرية عاجلاً:",
+    options: [
+      { text: "أتوقف عن التجاوب وأتحقق مباشرة بالاتصال بالعميد/الرئيس عبر الهاتف الرسمي المعتمد.", weight: 100 },
+      { text: "أطلب منه تأكيد هويته عبر نفس محادثة الواتساب قبل التنفيذ.", weight: 60 },
+      { text: "أنفذ الطلب فوراً لأن الرسالة قادمة من إدارة عليا بالكلية/العمادة.", weight: 0 },
+      { text: "أرسل البيانات المطلوبة ثم أبلغ زملائي لاحقاً.", weight: 20 }
+    ]
+  },
+  {
+    id: 8, 
+    category: "أمن الشبكات والاتصال", reference: "العمل عن بُعد",
+    question: "عند الحاجة لمتابعة المعاملات والأنظمة الإدارية بالجامعة أثناء تواجدك خارج مقر العمل عبر شبكة Wi-Fi عامة:",
+    options: [
+      { text: "أتصل عبر خدمة الشبكة الافتراضية للجامعة (UQU VPN) أو الاتصال الخلوي الشخصي.", weight: 100 },
+      { text: "أتصل بالشبكة العامة مع التأكد من فتح المواقع التي تبدأ بـ HTTPS فقط.", weight: 60 },
+      { text: "أتصفح الأنظمة الإدارية عبر الشبكة العامة دون إدخال بيانات حساسة.", weight: 30 },
+      { text: "أتصل بأي شبكة مفتوحة متوفرة وأنجز معاملاتي الإدارية طبيعياً.", weight: 0 }
+    ]
+  },
+  {
+    id: 9, 
+    category: "دعم الإدارة والثقافة التنظيمية", 
+    reference: "Management Support",
+    question: "كيف ترى دور إدارة العمادة/الكلية في دعم وتسهيل الممارسات الأمنية للموظفين؟",
+    options: [
+      { text: "توفر الإدارة التوعية والأدوات التقنية التي تسهل عملنا بأمان دون تعقيد الإجراءات.", weight: 100 },
+      { text: "توفر الإدارة التعاميم والسياسات الورقية فقط دون أدوات تطبيقية مساعدة.", weight: 70 },
+      { text: "تركز الإدارة على محاسبة الموظف عند وقوع الخطأ فقط دون توجييهه مسبقاً.", weight: 30 },
+      { text: "لا يوجد اهتمام ببيئة الأمان الرقمي في الإدارة/الكلية.", weight: 0 }
+    ]
+  },
+  {
+    id: 10, 
+    category: "الوعي بالمخاطر والاستجابة", 
+    reference: "الاستجابة للحوادث",
+    question: "إذا أدركت أنك نقرت بالخطأ على رابط مشبوه أو أدخلت كلمة مرورك في صفحة مزيفة من جهاز العمل بالمكتب:",
+    options: [
+      { text: "أفصل الجهاز عن الشبكة، وأغير كلمة المرور فوراً، وأبلغ عمادة تقنية المعلومات دون خوف من اللوم.", weight: 100 },
+      { text: "أغير كلمة المرور فقط وأفحص الجهاز ببرنامج الحماية دون إبلاغ الدعم الفني.", weight: 60 },
+      { text: "أغلق المتصفح وأعيد تشغيل الجهاز متمنياً عدم حدوث ضرر.", weight: 30 },
+      { text: "أتكتم على الموضوع لتجنب الإحراج أو المسؤولية الإدارية.", weight: 0 }
+    ]
+  },
+  {
+    id: 11, 
+    category: "السياسات والامتثال", 
+    reference: "الحلول الالتفافية",
+    question: "عندما تواجه مشكلة كبر حجم ملف معتمد في نظام المعاملات وتريد إرساله لإدارة أخرى بالجامعة:",
+    options: [
+      { text: "أستخدم خدمة المشاركة المعتمدة (OneDrive الجامعي) وأرسل الرابط آمنًا.", weight: 100 },
+      { text: "أرسل الملف عبر واتساب المكاتب لإنجاز المعاملة بسرعة.", weight: 50 },
+      { text: "أرفع الملف على موقع رفع عام خارجي وأرسل الرابط للموظف الآخر.", weight: 20 },
+      { text: "أقسم الملف بطرق غير آمنة أو أتجاوز النظام لتمريره.", weight: 0 }
+    ]
+  },
+  {
+    id: 12, 
+    category: "أمن الأجهزة والبرمجيات", 
+    reference: "أمن بيئة العمل الفيزيائية",
+    question: "عند مغادرتك لمكتبك بالكلية/العمادة لفترة قصيرة لحضور اجتماع أو جلب أوراق من الطابعة:",
+    options: [
+      { text: "أقفل شاشة الجهاز فوراً باستخدام الاختصار (Win+L / Cmd+Ctrl+Q).", weight: 100 },
+      { text: "أعتمد على القفل التلقائي للشاشة بعد انقضاء الوقت المحدد.", weight: 70 },
+      { text: "أترك الشاشة مفتوحة طالما لا يوجد مراجعون داخل المكتب.", weight: 30 },
+      { text: "أترك الشاشة مفتوحة دائماً لتسهيل العودة للعمل فوراً.", weight: 0 }
+    ]
+  },
+  {
+    id: 13, 
+    category: "المشاركة والمعايير التقنية", 
+    reference: "المبادرة والتوعية الأفقية",
+    question: "إذا لاحظت أن زميلك في المكتب ترك شاشته مفتوحة وفيها بيانات طلاب/منسوبين وغادر المكان:",
+    options: [
+      { text: "أنبه الزميل بلطف أو أقفل الشاشة لحين عودته حرصاً على سرية البيانات.", weight: 100 },
+      { text: "أنتظر عودته لأنبهه دون اللمس أو التدخل بجهازه.", weight: 70 },
+      { text: "أتجاهل الأمر لأن حماية الجهاز والبيانات مسؤولية الموظف نفسه وليست مسؤوليتي.", weight: 30 },
+      { text: "أستخدم جهازه لإنجاز عمل عاجل خاص بي.", weight: 0 }
+    ]
+  },
+  {
+    id: 14, 
+    category: "الوعي بالمخاطر والاستجابة", 
+    reference: "النسخ الاحتياطي بالجامعة",
+    question: "كيف تحمي السجلات، التقارير الإدارية، وأعمال الكلية المخزنة على جهازك المكتبي من التلف أو برمجيات الفدية؟",
+    options: [
+      { text: "أحفظ نسخة على السحابة المعتمدة للجامعة وأحتفظ بنسخة أخرى على قرص خارجي مشفر.", weight: 100 },
+      { text: "أعتمد كلياً على المزامنة السحابية التلقائية لحساب الجامعة.", weight: 75 },
+      { text: "أنسخ الملفات يدوياً على قرص USB عادي بشكل غير منتظم.", weight: 30 },
+      { text: "الملفات موجودة على القرص المحلي للجهاز فقط ولا أملك أي نسخة احتياطية.", weight: 0 }
+    ]
+  },
+  {
+    id: 15, 
+    category: "المشاركة والمعايير التقنية", 
+    reference: "قنوات الإبلاغ بالجامعة",
+    question: "عند رصد خلل أمني أو ثغرة في أحد الأنظمة الأكاديمية/الإدارية للجامعة، ما هو تصرفك الصحيح؟",
+    options: [
+      { text: "أرفع بلاغاً رسمياً فورياً لعمادة تقنية المعلومات عبر القنوات المعتمدة لحماية النظام.", weight: 100 },
+      { text: "أكتفي بتبليغ الموظف المسؤول عن النظام شفهياً.", weight: 70 },
+      { text: "أحاول تجربة الثغرة بنفسي للتأكد من مدى خطورتها قبل الإبلاغ.", weight: 30 },
+      { text: "لا أتخذ أي إجراء وأعتبر الأمر مسؤولية الشؤون التقنية فقط.", weight: 0 }
+    ]
+  }
+];
+
+    // 2. STATE MANAGEMENT
+    let currentIndex = 0;
+    let userAnswers = {};
+    let radarChartInstance = null;
+
+    // 3. NAVIGATION & UI CONTROLS
+    function startQuiz() {
+      document.getElementById('view-landing').classList.add('hidden');
+      document.getElementById('view-quiz').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const progressPercent = Math.round(((currentIndex + 1) / questions.length) * 100);
+
+      document.getElementById('quiz-progress-text').innerText = `السؤال ${currentIndex + 1} من ${questions.length}`;
+      document.getElementById('quiz-progress-percent').innerText = `${progressPercent}%`;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      document.getElementById('q-reference').innerText = `📌 ${q.reference}`;
+      document.getElementById('q-text').innerText = q.question;
+
+      const optionsContainer = document.getElementById('q-options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt) => {
+        const isSelected = userAnswers[q.id] === opt.weight;
+        const btn = document.createElement('button');
+        btn.className = `w-full text-right p-4 rounded-xl border transition text-sm flex items-center justify-between ${
+          isSelected 
+            ? 'border-cyan-400 bg-cyan-950/40 text-cyan-200 font-bold' 
+            : 'border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-slate-300'
+        }`;
+        btn.onclick = () => selectOption(q.id, opt.weight);
+        btn.innerHTML = `<span>${opt.text}</span> ${isSelected ? '<span class="text-cyan-400">✓</span>' : ''}`;
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('btn-prev').disabled = currentIndex === 0;
+      document.getElementById('btn-next').disabled = userAnswers[q.id] === undefined;
+      document.getElementById('btn-next').innerText = (currentIndex === questions.length - 1) ? 'إنهاء وحساب النتائج' : 'التالي ➡️';
+    }
+
+    function selectOption(qId, weight) {
+      userAnswers[qId] = weight;
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    // 4. RESULTS & SCORING ENGINE
+    function showResults() {
+      document.getElementById('view-quiz').classList.add('hidden');
+      document.getElementById('view-results').classList.remove('hidden');
+
+      // Calculate Category Averages
+      const catTotals = {};
+      const catCounts = {};
+
+      questions.forEach(q => {
+        const w = userAnswers[q.id] || 0;
+        if (!catTotals[q.category]) { catTotals[q.category] = 0; catCounts[q.category] = 0; }
+        catTotals[q.category] += w;
+        catCounts[q.category] += 1;
+      });
+
+      const catScores = {};
+      let totalSum = 0;
+      Object.keys(catTotals).forEach(cat => {
+        const avg = Math.round(catTotals[cat] / catCounts[cat]);
+        catScores[cat] = avg;
+        totalSum += avg;
+      });
+
+      const overall = Math.round(totalSum / Object.keys(catScores).length);
+
+      // Render Score & Status
+      document.getElementById('res-score').innerText = `${overall}%`;
+      const statusEl = document.getElementById('res-status');
+      if (overall >= 85) {
+        statusEl.innerText = "مناعة وسلوك حصين جداً (Low Risk)";
+        statusEl.className = "font-bold text-base text-emerald-400";
+      } else if (overall >= 65) {
+        statusEl.innerText = "سلوك ومخاطر متوسطة (Medium Risk)";
+        statusEl.className = "font-bold text-base text-amber-400";
+      } else {
+        statusEl.innerText = "عرضة عالية للاختراق (High Risk)";
+        statusEl.className = "font-bold text-base text-rose-400";
+      }
+
+      // Render Radar Chart
+      renderChart(catScores);
+
+      // Render Remediation Items
+      const sortedCats = Object.entries(catScores).sort((a,b) => a[1] - b[1]);
+      const topWeak = sortedCats.slice(0, 3);
+      const remediationContainer = document.getElementById('remediation-list');
+      remediationContainer.innerHTML = '';
+
+      topWeak.forEach(([cat, score]) => {
+        let action = "مراجعة السياسات والضوابط المعتمدة في هذا المجال فوراً.";
+        if (cat === "إدارة كلمات المرور والهوية") action = "تفعيل تطبيقات المصادقة (TOTP) واستخدام برنامج إدارة كلمات المرور وتجنب تكرار الكلمات.";
+        else if (cat === "التدريب والتصيد الاحتيالي") action = "التدرب على التحقق من النطاقات الرسمية، وتجنب النقر السريع تحت ضغط الوقت والإبلاغ الفوري.";
+        else if (cat === "السياسات والامتثال") action = "مراجعة سياسة الاستخدام المقبول (AUP) وتجنب استخدام الحلول الالتفافية (Shadow IT) لنقل البيانات.";
+        else if (cat === "الوعي بالمخاطر والاستجابة") action = "التصدّي لإجهاد الإشعارات (MFA Fatigue) والإبلاغ المباشر فور حدوث أي خطأ أمني دون تردد.";
+        else if (cat === "حماية البيانات والخصوصية") action = "تقييد مشاركة المستندات الرسمية طبقاً لنظام PDPL واستخدام سحابة OneDrive المعتمدة.";
+        else if (cat === "أمن الأجهزة والبرمجيات") action = "تفعيل القفل الفوري للشاشة (Win+L) وحظر استخدام الأدوات المكركة والتحميل المباشر.";
+
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-xl bg-slate-900 border border-slate-800 text-right";
+        card.innerHTML = `
+          <div class="font-bold text-slate-200 text-sm mb-1">${cat} (النتيجة: ${score}%)</div>
+          <div class="text-xs text-slate-400 leading-relaxed">${action}</div>
+        `;
+        remediationContainer.appendChild(card);
+      });
+    }
+
+    // 5. CHART.JS RADAR
+    function renderChart(scores) {
+      const ctx = document.getElementById('radarCanvas').getContext('2d');
+      if (radarChartInstance) radarChartInstance.destroy();
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: Object.keys(scores),
+          datasets: [{
+            label: 'مستوى الامتثال والسلوك (%)',
+            data: Object.values(scores),
+            backgroundColor: 'rgba(6, 182, 212, 0.25)',
+            borderColor: '#06b6d4',
+            borderWidth: 2,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#fff',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+              pointLabels: { color: '#cbd5e1', font: { size: 11 } },
+              ticks: { backdropColor: 'transparent', color: '#94a3b8', stepSize: 25 },
+              min: 0, max: 100
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // 6. PDF EXPORT
+    function downloadPDF() {
+      const element = document.getElementById('audit-report');
+      const opt = {
+        margin:       0.3,
+        filename:     'CyberSecurity_Behavioral_Audit_Report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    function resetApp() {
+      currentIndex = 0;
+      userAnswers = {};
+      document.getElementById('view-results').classList.add('hidden');
+      document.getElementById('view-landing').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
