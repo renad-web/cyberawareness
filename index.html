@@ -243,6 +243,9 @@
 
   <!-- JavaScript Logic -->
   <script>
+    // ⚠️ ضع رابط تطبيق الويب الخاص بـ Google Apps Script هنا:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyj_yplINxqxhPDZb6XLTyk4AfAdx-m783erR0BF3Phjno-0XD8WWN0LBnNhpLxsYH/exec";
+
     // 1. QUESTION BANK (15 Questions Aligned with HAIS-Q & MORPHEUS)
     const questions = [
       {
@@ -533,7 +536,7 @@
 
       const overall = Math.round(totalSum / Object.keys(catScores).length);
 
-      // --- حفظ الاستجابة في ذاكرة المنصة التجميعية (localStorage) ---
+      // --- حفظ الاستجابة في ذاكرة المنصة التجميعية (localStorage) وإرسالها لسحابة جوجل ---
       saveResponseToStorage(userDepartment, overall, catScores);
 
       // --- تحديث واجهة الشاشة (DARK UI) ---
@@ -590,6 +593,20 @@
         timestamp: new Date().toISOString()
       });
       localStorage.setItem('haseen_responses', JSON.stringify(existing));
+
+      // إرسال النتيجة إلى Google Sheets تلقائياً
+      if (typeof GOOGLE_SCRIPT_URL !== 'undefined' && GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "ضع_رابط_السكربت_هنا") {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dept: dept,
+            overall: overallScore,
+            categories: categoryScores
+          })
+        }).catch(err => console.error("خطأ في إرسال البيانات إلى Google Sheets:", err));
+      }
     }
 
     function openAdminDashboard() {
